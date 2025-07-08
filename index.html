@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
- <title>앞산자연산버섯 모임</title>
+<title>앞산자연산버섯 모임</title>
 <style>
   body {
     font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
@@ -54,12 +54,17 @@
   <div class="title">앞산자연산버섯 모임</div>
   
   <!-- 썸네일 미리보기 -->
-  <img src="https://blog.kakaocdn.net/dna/rxngn/btsO90bJkXh/AAAAAAAAAAAAAAAAAAAAABJDjGMoPNg-PgO2g92IkWkT42mksHYNaWzi7yIevDzb/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1753973999&allow_ip=&allow_referer=&signature=cv9XonHI3Zpv1Gi%2BXkqPdqH79zQ%3D" alt="버섯" style="width: 40%; height: auto;">
+  <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdna%2Frxngn%2FbtsO90bJkXh%2FAAAAAAAAAAAAAAAAAAAAABJDjGMoPNg-PgO2g92IkWkT42mksHYNaWzi7yIevDzb%2Fimg.png%3Fcredential%3DyqXZFxpELC7KVnFOS48ylbz2pIh7yKj8%26expires%3D1753973999%26allow_ip%3D%26allow_referer%3D%26signature%3Dcv9XonHI3Zpv1Gi%252BXkqPdqH79zQ%253D" alt="뉴스레터">
  
   
   <!-- 카카오톡 버튼들 -->
   <div class="kakao-buttons">
-    <button class="kakao-button" id="template-share-btn">
+    <button class="kakao-button" onclick="sendDefaultLink()">
+      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" alt="카카오톡 공유" class="talk-icon">
+      기본 공유하기
+    </button>
+    
+    <button class="kakao-button" onclick="sendTemplateLink()">
       <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" alt="카카오톡 템플릿 공유" class="talk-icon">
       템플릿 공유하기
     </button>
@@ -68,23 +73,21 @@
   <!-- 오류 메시지 표시 영역 -->
   <div id="error-message" class="error-message"></div>
 </div>
+
 <!-- Kakao SDK를 body 끝부분에 로드 -->
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js" 
       integrity="sha384-kYPsUbBPlktXsY6/oNHSUDZoTX6+YI51f63jCPEIPFP09ttByAdxd2mEjKuhdqn4" 
       crossorigin="anonymous"></script>
+
 <script type="text/javascript">
-  alert('스크립트가 정상적으로 실행됩니다!');
-  // Kakao 앱 키 (필수!)
-  const KAKAO_APP_KEY = '115df688110cf64094612243d047beaf'; // 실제 앱 키로 대체 필요
-  
   // 티켓 URL 상수 정의
-  const TICKET_URL_27 = 'https://band.us/band/93294136';
-  const TICKET_URL_28 = 'https://www.daangn.com/kr/groups/2dJx8JgA?utm_medium=copy_link';
+  const TICKET_URL_27 = 'https://daroo2314.github.io/webzine-1st/';
+  const TICKET_URL_28 = 'https://daroo2314.github.io/webzine-1st/';
   
-  // 이미지 URL
+  // 이미지 URL - 명시적으로 500x800 크기 지정
   const IMAGE_URL = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdna%2Frxngn%2FbtsO90bJkXh%2FAAAAAAAAAAAAAAAAAAAAABJDjGMoPNg-PgO2g92IkWkT42mksHYNaWzi7yIevDzb%2Fimg.png%3Fcredential%3DyqXZFxpELC7KVnFOS48ylbz2pIh7yKj8%26expires%3D1753973999%26allow_ip%3D%26allow_referer%3D%26signature%3Dcv9XonHI3Zpv1Gi%252BXkqPdqH79zQ%253D';
-   
-  // 템플릿 ID (필요한 경우)
+  
+  // 템플릿 ID
   const TEMPLATE_ID = 122223;
   
   // 에러 표시 함수
@@ -97,41 +100,79 @@
     console.error('에러:', message);
   }
   
-  // Kakao SDK 초기화 함수
+  // Kakao SDK 초기화 함수 - 한 번만 실행되도록 보장
+  let kakaoInitialized = false;
+  
   function initKakao() {
-    if (window.kakaoInitialized) return true;
-    if (!window.Kakao) {
-      showError('Kakao SDK가 로드되지 않았습니다.');
-      return false;
-    }
-    if (!window.Kakao.isInitialized()) {
-      window.Kakao.init(KAKAO_APP_KEY);
-    }
-    window.kakaoInitialized = window.Kakao.isInitialized();
-    if (!window.kakaoInitialized) {
-      showError('Kakao SDK 초기화에 실패했습니다.');
-      return false;
-    }
-    return true;
-  }
-
-  // DOMContentLoaded에서 버튼 이벤트 등록
-  document.addEventListener('DOMContentLoaded', function () {
-    function waitForKakaoAndInit(retry = 0) {
-      if (window.Kakao) {
-        initKakao();
-        const templateBtn = document.getElementById('template-share-btn');
-        if (templateBtn) {
-          templateBtn.addEventListener('click', sendTemplateLink);
-        }
-      } else if (retry < 20) {
-        setTimeout(() => waitForKakaoAndInit(retry + 1), 100);
-      } else {
-        showError('Kakao SDK를 불러오지 못했습니다.');
+    if (kakaoInitialized) return true;
+    
+    try {
+      if (!Kakao) {
+        showError('Kakao SDK가 로드되지 않았습니다.');
+        return false;
       }
+      
+      // 이미 초기화되었는지 확인
+      if (Kakao.isInitialized()) {
+        kakaoInitialized = true;
+        return true;
+      }
+      
+      // 초기화
+      Kakao.init('115df688110cf64094612243d047beaf');
+      kakaoInitialized = Kakao.isInitialized();
+      
+      if (!kakaoInitialized) {
+        showError('Kakao SDK 초기화에 실패했습니다.');
+        return false;
+      }
+      
+      return true;
+    } catch (e) {
+      showError('Kakao SDK 초기화 중 오류 발생: ' + e.message);
+      return false;
     }
-    waitForKakaoAndInit();
-  });
+  }
+  
+  // 기본 공유하기 함수
+  function sendDefaultLink() {
+    if (!initKakao()) return;
+    
+    try {
+      Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: "1st DAROO WEBZINE",
+          description: 'APRIL 2025',
+          imageUrl: IMAGE_URL,
+          imageWidth: 500,
+          imageHeight: 800,
+          link: {
+            mobileWebUrl: TICKET_URL_28,
+            webUrl: TICKET_URL_28
+          }
+        },
+        buttons: [
+          {
+            title: 'VIEW',
+            link: {
+              mobileWebUrl: TICKET_URL_27,
+              webUrl: TICKET_URL_27
+            }
+          },
+          {
+            title: 'VISIT',
+            link: {
+              mobileWebUrl: TICKET_URL_28,
+              webUrl: TICKET_URL_28
+            }
+          }
+        ]
+      });
+    } catch (e) {
+      showError('기본 공유하기 실패: ' + e.message);
+    }
+  }
   
   // 템플릿 공유하기 함수
   function sendTemplateLink() {
@@ -141,8 +182,8 @@
       Kakao.Share.sendCustom({
         templateId: TEMPLATE_ID,
         templateArgs: {
-          'title': "앞산자연산 버섯모임",
-          'description': '앞산자연산버섯 모임은 자연에서 나는 모든것을 공부하는 모임입니다.',
+          'title': "1st DAROO WEBZINE",
+          'description': 'APRIL 2025',
           'imageUrl': IMAGE_URL,
           'ticket_url_27': TICKET_URL_27,
           'ticket_url_28': TICKET_URL_28
