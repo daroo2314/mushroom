@@ -91,36 +91,84 @@
   // 템플릿 ID (필요한 경우)
   const TEMPLATE_ID = 122223;
   
-  // Kakao SDK 초기화 함수
-  function initKakao() {
-    if (!Kakao.isInitialized()) {
-      Kakao.init(KAKAO_APP_KEY);
-    }
-  }
-  
-  // 오류 메시지 표시 함수
+  // 에러 표시 함수
   function showError(message) {
     const errorElement = document.getElementById('error-message');
-    errorElement.textContent = message;
-    errorElement.style.display = 'block';
+    if (errorElement) {
+      errorElement.innerText = message;
+      errorElement.style.display = 'block';
+    }
+    console.error('에러:', message);
+  }
+  
+  // Kakao SDK 초기화 함수 - 한 번만 실행되도록 보장
+  let kakaoInitialized = false;
+  
+  function initKakao() {
+    if (kakaoInitialized) return true;
+    
+    try {
+      if (!Kakao) {
+        showError('Kakao SDK가 로드되지 않았습니다.');
+        return false;
+      }
+      
+      // 이미 초기화되었는지 확인
+      if (Kakao.isInitialized()) {
+        kakaoInitialized = true;
+        return true;
+      }
+      
+      // 초기화
+      Kakao.init('115df688110cf64094612243d047beaf');
+      kakaoInitialized = Kakao.isInitialized();
+      
+      if (!kakaoInitialized) {
+        showError('Kakao SDK 초기화에 실패했습니다.');
+        return false;
+      }
+      
+      return true;
+    } catch (e) {
+      showError('Kakao SDK 초기화 중 오류 발생: ' + e.message);
+      return false;
+    }
   }
   
   // 기본 공유하기 함수
   function sendDefaultLink() {
+    if (!initKakao()) return;
+    
     try {
-      initKakao();
-      
       Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
-          title: '윤석열 탄핵! 주민교회 광화문 집회',
-          description: '3월29일 토요일 오후 4시/광화문 정문',
+          title: "조용수의 '일고오창' 여섯 번째 鼓 : 고수 조용수, 다섯 제(制)의 수궁에 유(留)하다",
+          description: '고수 조용수의 북에 다섯 소리꾼의 다섯 제가 연창으로 이어지는 완창무대',
           imageUrl: IMAGE_URL,
+          imageWidth: 500,
+          imageHeight: 800,
           link: {
             mobileWebUrl: TICKET_URL_28,
             webUrl: TICKET_URL_28
           }
-        }
+        },
+        buttons: [
+          {
+            title: '예매3월27일',
+            link: {
+              mobileWebUrl: TICKET_URL_27,
+              webUrl: TICKET_URL_27
+            }
+          },
+          {
+            title: '예매3월28일',
+            link: {
+              mobileWebUrl: TICKET_URL_28,
+              webUrl: TICKET_URL_28
+            }
+          }
+        ]
       });
     } catch (e) {
       showError('기본 공유하기 실패: ' + e.message);
@@ -129,14 +177,14 @@
   
   // 템플릿 공유하기 함수
   function sendTemplateLink() {
+    if (!initKakao()) return;
+    
     try {
-      initKakao();
-      
       Kakao.Share.sendCustom({
         templateId: TEMPLATE_ID,
         templateArgs: {
-          'title': "윤석열 탄핵! 주민교회 광화문 집회",
-          'description': '3월29일 토요일 오후 4시/광화문 정문',
+          'title': "조용수의 '일고오창' 여섯 번째 鼓",
+          'description': '고수 조용수, 다섯 제(制)의 수궁에 유(留)하다',
           'imageUrl': IMAGE_URL,
           'ticket_url_27': TICKET_URL_27,
           'ticket_url_28': TICKET_URL_28
@@ -146,15 +194,8 @@
       showError('템플릿 공유하기 실패: ' + e.message);
     }
   }
-  
-  // 페이지 로드 시 Kakao SDK 초기화
-  window.addEventListener('load', () => {
-    try {
-      initKakao();
-    } catch (e) {
-      showError(e.message);
-    }
-  });
 </script>
 </body>
 </html>
+
+
