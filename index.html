@@ -59,12 +59,12 @@
   
   <!-- 카카오톡 버튼들 -->
   <div class="kakao-buttons">
-    <button class="kakao-button" onclick="sendDefaultLink()">
+    <button class="kakao-button">
       <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" alt="카카오톡 공유" class="talk-icon">
       기본 공유하기
     </button>
     
-    <button class="kakao-button" onclick="sendTemplateLink()">
+    <button class="kakao-button">
       <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" alt="카카오톡 템플릿 공유" class="talk-icon">
       템플릿 공유하기
     </button>
@@ -101,39 +101,42 @@
     console.error('에러:', message);
   }
   
-  // Kakao SDK 초기화 함수 - 한 번만 실행되도록 보장
-  let kakaoInitialized = false;
-  
+  // Kakao SDK 초기화 함수
   function initKakao() {
-    if (kakaoInitialized) return true;
-    
-    try {
-      if (!Kakao) {
-        showError('Kakao SDK가 로드되지 않았습니다.');
-        return false;
-      }
-      
-      // 이미 초기화되었는지 확인
-      if (Kakao.isInitialized()) {
-        kakaoInitialized = true;
-        return true;
-      }
-      
-      // 초기화
-      Kakao.init(KAKAO_APP_KEY);
-      kakaoInitialized = Kakao.isInitialized();
-      
-      if (!kakaoInitialized) {
-        showError('Kakao SDK 초기화에 실패했습니다.');
-        return false;
-      }
-      
-      return true;
-    } catch (e) {
-      showError('Kakao SDK 초기화 중 오류 발생: ' + e.message);
+    if (window.kakaoInitialized) return true;
+    if (!window.Kakao) {
+      showError('Kakao SDK가 로드되지 않았습니다.');
       return false;
     }
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(KAKAO_APP_KEY);
+    }
+    window.kakaoInitialized = window.Kakao.isInitialized();
+    if (!window.kakaoInitialized) {
+      showError('Kakao SDK 초기화에 실패했습니다.');
+      return false;
+    }
+    return true;
   }
+
+  // DOMContentLoaded에서 버튼 이벤트 등록
+  document.addEventListener('DOMContentLoaded', function () {
+    function waitForKakaoAndInit(retry = 0) {
+      if (window.Kakao) {
+        initKakao();
+        const buttons = document.querySelectorAll('.kakao-button');
+        if (buttons.length >= 2) {
+          buttons[0].addEventListener('click', sendDefaultLink);
+          buttons[1].addEventListener('click', sendTemplateLink);
+        }
+      } else if (retry < 20) {
+        setTimeout(() => waitForKakaoAndInit(retry + 1), 100);
+      } else {
+        showError('Kakao SDK를 불러오지 못했습니다.');
+      }
+    }
+    waitForKakaoAndInit();
+  });
   
   // 기본 공유하기 함수
   function sendDefaultLink() {
@@ -197,5 +200,3 @@
 </script>
 </body>
 </html>
-
-
