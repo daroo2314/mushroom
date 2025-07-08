@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+ <title>탄핵집회 By. Juminchurch</title>
+<style>
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    padding: 20px;
+  }
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .title {
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  .kakao-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+  }
+  .kakao-button {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    background-color: #FEE500;
+    border-radius: 4px;
+    padding: 8px 12px;
+    border: none;
+  }
+  .talk-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+  }
+  .error-message {
+    color: red;
+    margin-top: 10px;
+    display: none;
+    font-size: 14px;
+  }
+  .preview-image {
+    max-width: 250px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- 제목은 한 번만 표시 -->
+  <div class="title">앞산자연산버섯 모임</div>
+  
+  <!-- 썸네일 미리보기 -->
+  <img src="https://blog.kakaocdn.net/dna/rxngn/btsO90bJkXh/AAAAAAAAAAAAAAAAAAAAABJDjGMoPNg-PgO2g92IkWkT42mksHYNaWzi7yIevDzb/img.png?credential=yqXZFxpELC7KVnFOS48ylbz2pIh7yKj8&expires=1753973999&allow_ip=&allow_referer=&signature=cv9XonHI3Zpv1Gi%2BXkqPdqH79zQ%3D" alt="버섯">
+ 
+  
+  <!-- 카카오톡 버튼들 -->
+  <div class="kakao-buttons">
+    <button class="kakao-button" onclick="sendDefaultLink()">
+      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" alt="카카오톡 공유" class="talk-icon">
+      기본 공유하기
+    </button>
+    
+    <button class="kakao-button" onclick="sendTemplateLink()">
+      <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" alt="카카오톡 템플릿 공유" class="talk-icon">
+      템플릿 공유하기
+    </button>
+  </div>
+  
+  <!-- 오류 메시지 표시 영역 -->
+  <div id="error-message" class="error-message"></div>
+</div>
+<!-- Kakao SDK를 body 끝부분에 로드 -->
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.5.0/kakao.min.js" 
+      integrity="115df688110cf64094612243d047beaf" 
+      crossorigin="anonymous"></script>
+<script type="text/javascript">
+  // Kakao 앱 키 (필수!)
+  const KAKAO_APP_KEY = 'b68d497748f94d3ed4e2a34ccf4bd43c'; // 실제 앱 키로 대체 필요
+  
+  // 티켓 URL 상수 정의
+  const TICKET_URL_27 = 'https://band.us/band/93294136';
+  const TICKET_URL_28 = 'https://www.daangn.com/kr/groups/2dJx8JgA?utm_medium=copy_link';
+  
+  // 이미지 URL
+  const IMAGE_URL = 'https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdna%2Frxngn%2FbtsO90bJkXh%2FAAAAAAAAAAAAAAAAAAAAABJDjGMoPNg-PgO2g92IkWkT42mksHYNaWzi7yIevDzb%2Fimg.png%3Fcredential%3DyqXZFxpELC7KVnFOS48ylbz2pIh7yKj8%26expires%3D1753973999%26allow_ip%3D%26allow_referer%3D%26signature%3Dcv9XonHI3Zpv1Gi%252BXkqPdqH79zQ%253D';
+  
+  // 템플릿 ID (필요한 경우)
+  const TEMPLATE_ID = 122223; // 실제 템플릿 ID로 대체 필요
+  
+  // Kakao SDK 초기화 함수
+  function initKakao() {
+    if (!Kakao.isInitialized()) {
+      Kakao.init(KAKAO_APP_KEY);
+    }
+  }
+  
+  // 오류 메시지 표시 함수
+  function showError(message) {
+    const errorElement = document.getElementById('error-message');
+    errorElement.textContent = message;
+    errorElement.style.display = 'block';
+  }
+  
+  // 기본 공유하기 함수
+  function sendDefaultLink() {
+    try {
+      initKakao();
+      
+      Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: '윤석열 탄핵! 주민교회 광화문 집회',
+          description: '3월29일 토요일 오후 4시/광화문 정문',
+          imageUrl: IMAGE_URL,
+          link: {
+            mobileWebUrl: TICKET_URL_28,
+            webUrl: TICKET_URL_28
+          }
+        }
+      });
+    } catch (e) {
+      showError('기본 공유하기 실패: ' + e.message);
+    }
+  }
+  
+  // 템플릿 공유하기 함수
+  function sendTemplateLink() {
+    try {
+      initKakao();
+      
+      Kakao.Share.sendCustom({
+        templateId: TEMPLATE_ID,
+        templateArgs: {
+          'title': "윤석열 탄핵! 주민교회 광화문 집회",
+          'description': '3월29일 토요일 오후 4시/광화문 정문',
+          'imageUrl': IMAGE_URL,
+          'ticket_url_27': TICKET_URL_27,
+          'ticket_url_28': TICKET_URL_28
+        }
+      });
+    } catch (e) {
+      showError('템플릿 공유하기 실패: ' + e.message);
+    }
+  }
+  
+  // 페이지 로드 시 Kakao SDK 초기화
+  window.addEventListener('load', () => {
+    try {
+      initKakao();
+    } catch (e) {
+      showError(e.message);
+    }
+  });
+</script>
+</body>
+</html>
