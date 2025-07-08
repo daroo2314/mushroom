@@ -120,7 +120,7 @@
       }
       
       // 초기화
-      Kakao.init('115df688110cf64094612243d047beaf');
+      Kakao.init(KAKAO_APP_KEY);
       kakaoInitialized = Kakao.isInitialized();
       
       if (!kakaoInitialized) {
@@ -143,8 +143,8 @@
       Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
-          title: "조용수의 '일고오창' 여섯 번째 鼓 : 고수 조용수, 다섯 제(制)의 수궁에 유(留)하다",
-          description: '고수 조용수의 북에 다섯 소리꾼의 다섯 제가 연창으로 이어지는 완창무대',
+          title: "앞산자연산버섯 모임",
+          description: '앞산자연산버섯 모임은 자연에서 나는 모든것을 공부하는 모임입니다.',
           imageUrl: IMAGE_URL,
           imageWidth: 500,
           imageHeight: 800,
@@ -183,8 +183,8 @@
       Kakao.Share.sendCustom({
         templateId: TEMPLATE_ID,
         templateArgs: {
-          'title': "조용수의 '일고오창' 여섯 번째 鼓",
-          'description': '고수 조용수, 다섯 제(制)의 수궁에 유(留)하다',
+          'title': "앞산자연산 버섯모임",
+          'description': '앞산자연산버섯 모임은 자연에서 나는 모든것을 공부하는 모임입니다.',
           'imageUrl': IMAGE_URL,
           'ticket_url_27': TICKET_URL_27,
           'ticket_url_28': TICKET_URL_28
